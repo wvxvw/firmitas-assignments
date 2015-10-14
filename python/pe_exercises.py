@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
 def fib(n):
+    """
+    It is possible to compute N'th Fibonacci number analytically,
+    but I was asked not to do this, and to keep it simple. So, here
+    you have the iterative version.
+    """
     total, last = 1, 1
     for i in range(n - 2):
         temp = total
@@ -9,13 +14,67 @@ def fib(n):
     return total
 
 def digits(n):
+    """
+    The digits of the argument, not counting the sign.
+    """
     n = abs(n)
     result = []
-    while n > 0:
-        result.append(n % 10)
-        n //= 10
+    if n > 0:
+        while n > 0:
+            result.append(n % 10)
+            n //= 10
+    else:
+        result.append(n)
     return result
 
+def is_prime(n, sieve):
+    """
+    Tests whether n is prime.  Sieve should contain all primes less than n.
+    """
+    for p in sieve:
+        if n % p == 0:
+            return False
+    return True
+
+def next_prime(sieve):
+    """
+    Given the sieve containing primes searches for the prime greater than the
+    last element of the sieve, such that there are no primes less than this
+    one which are not in the sieve.
+    """
+    last = sieve[-1] + 2
+    while not is_prime(last, sieve):
+        last += 2
+    sieve.append(last)
+
+def primes(n = None):
+    """
+    Iterator.  Generates primes.
+    """
+    sieve = [2, 3, 5, 7, 11, 13, 17, 19, 23, 27]
+    m = 0
+    while not n or m < n:
+        try:
+            yield sieve[m]
+            m += 1
+        except IndexError:
+            next_prime(sieve)
+    else:
+        raise StopIteration()
+
+def odd_composite():
+    """
+    Iterator.  Generates odd composite numbers.
+    """
+    last = 9
+    for p in primes():
+        if p <= last:
+            last = p + 2
+            continue
+        for n in range(last, p - 1, 2):
+            yield n
+        last = p + 2
+    
 def exercise_25():
     """
     The Fibonacci sequence is defined by the recurrence relation:
