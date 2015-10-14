@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import math
+import heapq
+
 def fib(n):
     """
     It is possible to compute N'th Fibonacci number analytically,
@@ -74,7 +77,48 @@ def odd_composite():
         for n in range(last, p - 1, 2):
             yield n
         last = p + 2
-    
+
+def factors(n):
+    fact = []
+    for p in primes():
+        if p > n: break
+        while n % p == 0:
+            fact.append(p)
+            n //= p
+    return fact
+
+def nub(nums):
+    heap = nums[:]
+    heapq.heapify(heap)
+    result = [heapq.heappop(heap)]
+    while heap:
+        lead = heapq.heappop(heap)
+        if result[-1] != lead:
+            result.append(lead)
+    return result
+
+def is_square(n):
+    last, state, facts = None, 0, factors(n)
+    if len(facts) % 2 == 0:
+        for f in facts:
+            if state == 0:
+                last = f
+                state = 1
+            elif state == 1:
+                if f != last:
+                    return False
+                state = 0
+    else: return False
+    return True
+        
+def decomposes_goldbach(n):
+    for p in primes():
+        if p > n:
+            return False
+        rest = n - p
+        if rest % 2 == 0 and is_square(rest // 2):
+            return True
+
 def exercise_25():
     """
     The Fibonacci sequence is defined by the recurrence relation:
@@ -98,7 +142,8 @@ def exercise_25():
     
     The 12th term, F12, is the first term to contain three digits.
     
-    What is the index of the first term in the Fibonacci sequence to contain 1000 digits?
+    What is the index of the first term in the Fibonacci sequence 
+    to contain 1000 digits?
     """
     # Start with some initial guess: fib(1000) and double the size
     # until we find a number with more than 1000 digits once done,
@@ -129,3 +174,24 @@ def exercise_25():
         n -= 1
         guess = fib(n)
     return n + 1
+
+def exercise_46():
+    """
+    It was proposed by Christian Goldbach that every odd composite
+    number can be written as the sum of a prime and twice a square.
+    
+    9 = 7 + 2×12
+    15 = 7 + 2×22
+    21 = 3 + 2×32
+    25 = 7 + 2×32
+    27 = 19 + 2×22
+    33 = 31 + 2×12
+    
+    It turns out that the conjecture was false.
+    
+    What is the smallest odd composite that cannot be written as
+    the sum of a prime and twice a square?
+    """
+    for c in odd_composite():
+        if not decomposes_goldbach(c):
+            return c
