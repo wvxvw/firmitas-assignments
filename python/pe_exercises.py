@@ -5,6 +5,8 @@ import heapq
 import bisect
 import os
 
+from cards import Hand
+
 def fib(n):
     """
     It is possible to compute N'th Fibonacci number analytically,
@@ -160,9 +162,6 @@ def decomposes_goldbach(n):
         rest = n - p
         if rest % 2 == 0 and int(math.sqrt(rest // 2)) ** 2 == rest // 2:
             return True
-
-def poker_hand(cards):
-    pass
 
 def exercise_25():
     """
@@ -345,5 +344,9 @@ def exercise_54():
     p = os.path
     parent = p.dirname(p.dirname(__file__))
     with open(p.join(parent, './etc/p054_poker.txt'), 'r') as f:
+        wins = 0
         for line in f:
-            print line
+            cards = line.strip().split(" ")
+            if Hand(cards[:5]) > Hand(cards[5:]):
+                wins += 1
+        return wins
