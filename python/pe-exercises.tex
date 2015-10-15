@@ -1,0 +1,357 @@
+% Created 2015-10-15 Thu 19:05
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage[hidelinks]{hyperref}
+\tolerance=1000
+\usepackage[utf8]{inputenc}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{commath}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{minted}
+\usemintedstyle{perldoc}
+\hypersetup{urlcolor=blue}
+\hypersetup{colorlinks,urlcolor=blue}
+\setlength{\parskip}{16pt plus 2pt minus 2pt}
+\renewcommand{\arraystretch}{1.6}
+\definecolor{codebg}{rgb}{0.96,0.99,0.8}
+\author{Oleg Sivokon}
+\date{\textit{<2015-10-15 Thu>}}
+\title{Selected Project Euler Exercises}
+\hypersetup{
+ pdfauthor={Oleg Sivokon},
+ pdftitle={Selected Project Euler Exercises},
+ pdfkeywords={Project Euler, Assignment, Firmitas},
+ pdfsubject={Selected Project Euler Exercise, Assignment for Firmitas CS},
+ pdfcreator={Emacs 25.0.50.1 (Org mode 8.3beta)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\newpage
+
+\section{Foreword}
+\label{sec:orgheadline1}
+\section{Exercises}
+\label{sec:orgheadline18}
+\subsection{1000-digits Fibonacci number PE-25}
+\label{sec:orgheadline5}
+\subsubsection{Problem Statement}
+\label{sec:orgheadline2}
+The Fibonacci sequence is defined by the recurrence relation:
+
+\begin{equation*}
+  F_n = F_{n-1} + F_{n-2},\; \textit{where}\; F_1 = 1\; \textit{and} \; F_2 = 1\;.
+\end{equation*}
+
+
+Hence the first 12 terms will be:
+
+\begin{align*}
+  F_1    &= 1   \\
+  F_2    &= 1   \\
+  F_3    &= 2   \\
+  F_4    &= 3   \\
+  F_5    &= 5   \\
+  F_6    &= 8   \\
+  F_7    &= 13  \\
+  F_8    &= 21  \\
+  F_9    &= 34  \\
+  F_{10} &= 55  \\
+  F_{11} &= 89  \\
+  F_{12} &= 144
+\end{align*}
+
+
+The \(12^{th}\) term, \(F_{12}\), is the first term to contain three digits.
+
+What is the index of the first term in the Fibonacci sequence 
+to contain 1000 digits?
+
+\subsubsection{Discussion}
+\label{sec:orgheadline3}
+Start with some initial guess: \(fib(1000)\) and double the size until we find
+a number with more than 1000 digits once done, subtract the half of the last
+increment, depending on whether we overshoot or undershoot subtract or add
+the quarter of the last increment and so on, until we find two adjacent
+Fibonacci numbers such that the first has at most 999 digits and the second
+has 1000 or more digits.  This will ensure that we calculate at most
+\(log(1000) \approx 10\) operations.  Afterwards, because there could be
+several Fibonacci numbers of the same length, we'll find the smallest one
+using linear search (this won't take more than \(log(2^4) = 4\) operations.)
+
+\subsubsection{Solution}
+\label{sec:orgheadline4}
+
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
+from combinatorics import fib, digits
+
+n = 1000
+guess = fib(n)
+while len(digits(guess)) < 1000:
+    n *= 2
+    guess = fib(n)
+m = n // 4
+n -= m
+while m > 1:
+    guess = fib(n)
+    m //= 2
+    if len(digits(guess)) > 1000:
+        n -= m
+    else:
+        n += m
+while len(digits(guess)) >= 1000:
+    n -= 1
+    guess = fib(n)
+return n + 1
+\end{minted}
+
+\begin{verbatim}
+4782
+\end{verbatim}
+
+\subsection{Goldbach's other conjecture PE-46}
+\label{sec:orgheadline9}
+\subsubsection{Problem statement}
+\label{sec:orgheadline6}
+It was proposed by Christian Goldbach that every odd composite number can be
+written as the sum of a prime and twice a square.
+
+\begin{align*}
+  9  &= 7  + 2 \times 12 \\
+  15 &= 7  + 2 \times 22 \\
+  21 &= 3  + 2 \times 32 \\
+  25 &= 7  + 2 \times 32 \\
+  27 &= 19 + 2 \times 22 \\
+  33 &= 31 + 2 \times 12
+\end{align*}
+
+
+It turns out that the conjecture was false.
+
+What is the smallest odd composite that cannot be written as the sum of a
+prime and twice a square?
+
+\subsubsection{Discussion}
+\label{sec:orgheadline7}
+There doesn't seem to be an easier way than just a brute-force search.  In
+other words, the code simply generates subsequent odd composite numbers and
+tests whether the number complies with the contstraints of conjecture.
+
+\subsubsection{Solution}
+\label{sec:orgheadline8}
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
+import math
+from primes import odd_composite, primes
+
+def decomposes_goldbach(n):
+    """
+    Returns True iff n can be decomposed into p + 2 * i^2, where
+    p is a prime and i is an integer.
+    """
+    for p in primes():
+        if p > n:
+            return False
+        rest = n - p
+        if rest % 2 == 0 and int(math.sqrt(rest // 2)) ** 2 == rest // 2:
+            return True
+
+for c in odd_composite():
+    if not decomposes_goldbach(c):
+        return c
+\end{minted}
+
+\begin{verbatim}
+5777
+\end{verbatim}
+
+\subsection{Largest sum of consequtive primes PE-50}
+\label{sec:orgheadline13}
+\subsubsection{Problem statement}
+\label{sec:orgheadline10}
+The prime 41, can be written as the sum of six consecutive primes:
+
+\begin{align*}
+  41 = 2 + 3 + 5 + 7 + 11 + 13
+\end{align*}
+
+This is the longest sum of consecutive primes that adds to a prime
+below one-hundred.
+
+The longest sum of consecutive primes below one-thousand that adds
+to a prime, contains 21 terms, and is equal to 953.
+
+Which prime, below one-million, can be written as the sum of the
+most consecutive primes?
+
+\subsubsection{Discussion}
+\label{sec:orgheadline11}
+In the preparation phase the code generates all primes which add up to less
+than a million, while at the same time calculating sums of the primes
+generated so far.  This acts as a cache for the sums we would have to
+calculate repeatedly whenever we'd verify every other sequence of primes.
+
+During the next step the code choses sums in order of decreasing number of
+summands, iteratively updating the maximum prime for the longest sequence
+found so far.  Once no sums of the longest-so-far sequence can be found,
+the lagorithm terminates.
+
+\subsubsection{Solution}
+\label{sec:orgheadline12}
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
+from primes import primes, is_prime
+
+sieve, prefixes, max_prime, longest_seq = [], [0], 0, 0
+for p in primes():
+    if prefixes[-1] + p > 1000000:
+        break
+    sieve.append(p)
+    prefixes.append(prefixes[-1] + p)
+terms = 1
+for i in range(len(prefixes)):
+    for j in range(i + terms, len(prefixes)):
+        n = prefixes[j] - prefixes[i]
+        if j - i > terms:
+            is_p, sieve = is_prime(n, sieve)
+            if is_p:
+                terms, max_prime = j - i, n
+return max_prime
+\end{minted}
+
+\begin{verbatim}
+997651
+\end{verbatim}
+
+\subsection{Poker game PE-54}
+\label{sec:orgheadline17}
+\subsubsection{Problem statement}
+\label{sec:orgheadline14}
+In the card game poker, a hand consists of five cards 
+and are ranked, from lowest to highest, in the following way:
+
+\begin{description}
+\item[{High Card}] Highest value card.
+\item[{One Pair}] Two cards of the same value.
+\item[{Two Pairs}] Two different pairs.
+\item[{Three of a Kind}] Three cards of the same value.
+\item[{Straight}] All cards are consecutive values.
+\item[{Flush}] All cards of the same suit.
+\item[{Full House}] Three of a kind and a pair.
+\item[{Four of a Kind}] Four cards of the same value.
+\item[{Straight Flush}] All cards are consecutive values of same suit.
+\item[{Royal Flush}] Ten, Jack, Queen, King, Ace, in same suit.
+\end{description}
+
+The cards are valued in the order:
+
+\begin{align*}
+  2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
+\end{align*}
+
+
+If two players have the same ranked hands then the rank made up of the
+highest value wins; for example, a pair of eights beats a pair of fives (see
+example 1 below). But if two ranks tie, for example, both players have a
+pair of queens, then highest cards in each hand are compared (see example 4
+below); if the highest cards tie then the next highest cards are compared,
+and so on.
+
+Consider the following five hands dealt to two players:
+
+\begin{center}
+\begin{tabular}{lll}
+Player 1 & Player 2 & Winner\\
+\hline
+5H 5C 6S 7S KD & 2C 3S 8S 8D TD & Player 2\\
+Pair of Fives & Pair of Eights & \\
+\hline
+5D 8C 9S JS AC & 2C 5C 7D 8S QH & Player 1\\
+Highest card Ace & Highest card Queen & \\
+\hline
+2D 9C AS AH AC & 3D 6D 7D TD QD & Player 2\\
+Three Aces & Flush with Diamonds & \\
+\hline
+4D 6S 9H QH QC & 3D 6D 7H QD QS & Player 1\\
+Pair of Queens & Pair of Queens & \\
+Highest card Nine & Highest card Seven & \\
+\hline
+2H 2D 4C 4D 4S & 3C 3D 3S 9S 9D & Player 1\\
+Full House & Full House & \\
+With Three Fours & with Three Threes & \\
+\end{tabular}
+\end{center}
+
+The file, poker.txt, contains one-thousand random hands dealt to two
+players. Each line of the file contains ten cards (separated by a single
+space): the first five are Player 1's cards and the last five are Player 2's
+cards. You can assume that all hands are valid (no invalid characters or
+repeated cards), each player's hand is in no specific order, and in each
+hand there is a clear winner.
+
+How many hands does Player 1 win?
+
+\subsubsection{Discussion}
+\label{sec:orgheadline15}
+Player's hand will be represented by a class \texttt{Hand}.  This class is
+initalized with the raw card data.  During initialization the cards are
+sorted in order from least to highest denomination.  \texttt{Hand} class will aslo
+implement operators required for comparison.  Once such operator is called,
+the code will determine (and cache):
+
+\begin{enumerate}
+\item The value of the hand.  Hands are given values using the following scheme:
+\begin{itemize}
+\item If no special combination is found (s.a. \emph{flush}), then the hand is
+worth as much as its highest denomination card.
+\item Special denominations recieve one point more than the highest card,
+plus their relative rank, i.e. \emph{one pair} receives 15, \emph{two pairs}
+recieves 16 and so on.
+\item Ties aren't broken at this time.
+\end{itemize}
+\item The stretches of cards of the same denomination.
+\item If the code encounters a tie, it tries to break it using the rules given
+below.
+\begin{itemize}
+\item Given the \texttt{stretches} information the code will select only the cards
+that will influence the decision.
+\item Compare selected cards in order from highest to lowest denomination.
+\end{itemize}
+\end{enumerate}
+
+The \texttt{cards\_txt} file can be found in \url{../etc/p054_poker.txt}.
+
+\subsubsection{Solution}
+\label{sec:orgheadline16}
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
+from cards import Hand
+
+with open(cards_txt, 'r') as f:
+    wins = 0
+    for line in f:
+        cards = line.strip().split(" ")
+        if Hand(cards[:5]) > Hand(cards[5:]):
+            wins += 1
+    return wins
+\end{minted}
+
+\begin{verbatim}
+376
+\end{verbatim}
+\end{document}
