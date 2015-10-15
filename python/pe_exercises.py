@@ -2,6 +2,8 @@
 
 import math
 import heapq
+import bisect
+import os
 
 def fib(n):
     """
@@ -30,14 +32,50 @@ def digits(n):
         result.append(n)
     return result
 
-def is_prime(n, sieve):
+def primes_seq(n):
+    """
+    Generates a sequence of primes up to n.
+    """
+    seq = range(n + 1)
+    root = int(math.sqrt(n))
+ 
+    for i in range(2, root + 1):
+        if seq[i]:
+            seq[2 * i::i] = [None] * (n // i - 1)
+ 
+    return filter(None, seq[2:])
+
+def is_next_prime(n, sieve):
     """
     Tests whether n is prime.  Sieve should contain all primes less than n.
     """
+    root = int(math.sqrt(n))
     for p in sieve:
+        if p > root:
+            break
         if n % p == 0:
             return False
     return True
+
+def is_prime(n, sieve):
+    if n < sieve[-1]:
+        pos = bisect.bisect_left(sieve, n)
+        return sieve[pos] == n, sieve
+    root = int(math.sqrt(n))
+    for s in sieve:
+        if s > root:
+            return True, sieve
+        if n % s == 0:
+            return False, sieve
+    last = sieve[-1]
+    while last < root:
+        next_prime(sieve)
+        last = sieve[-1]
+        if last == n:
+            return True, sieve
+        if n % last == 0:
+            return False, sieve
+    return True, sieve
 
 def next_prime(sieve):
     """
@@ -46,7 +84,7 @@ def next_prime(sieve):
     one which are not in the sieve.
     """
     last = sieve[-1] + 2
-    while not is_prime(last, sieve):
+    while not is_next_prime(last, sieve):
         last += 2
     sieve.append(last)
 
@@ -54,7 +92,7 @@ def primes(n = None):
     """
     Iterator.  Generates primes.
     """
-    sieve = [2, 3, 5, 7, 11, 13, 17, 19, 23, 27]
+    sieve = primes_seq(n or 10)
     m = 0
     while not n or m < n:
         try:
@@ -79,6 +117,9 @@ def odd_composite():
         last = p + 2
 
 def factors(n):
+    """
+    Generates all prime factors of n.
+    """
     fact = []
     for p in primes():
         if p > n: break
@@ -88,6 +129,10 @@ def factors(n):
     return fact
 
 def nub(nums):
+    """
+    Returns a copy of nums with duplicates removed.  The numbers
+    in nums will be solrted in increasing order.
+    """
     heap = nums[:]
     heapq.heapify(heap)
     result = [heapq.heappop(heap)]
@@ -97,27 +142,27 @@ def nub(nums):
             result.append(lead)
     return result
 
-def is_square(n):
-    last, state, facts = None, 0, factors(n)
-    if len(facts) % 2 == 0:
-        for f in facts:
-            if state == 0:
-                last = f
-                state = 1
-            elif state == 1:
-                if f != last:
-                    return False
-                state = 0
-    else: return False
-    return True
+def has_square(n):
+    """
+    Returns True iff n contains a perfect square as a factor.
+    """
+    facts = factors(n)
+    return len(nub(facts)) < facts
         
 def decomposes_goldbach(n):
+    """
+    Returns True iff n can be decomposed into p + 2 * i^2, where
+    p is a prime and i is an integer.
+    """
     for p in primes():
         if p > n:
             return False
         rest = n - p
-        if rest % 2 == 0 and is_square(rest // 2):
+        if rest % 2 == 0 and int(math.sqrt(rest // 2)) ** 2 == rest // 2:
             return True
+
+def poker_hand(cards):
+    pass
 
 def exercise_25():
     """
@@ -195,3 +240,110 @@ def exercise_46():
     for c in odd_composite():
         if not decomposes_goldbach(c):
             return c
+
+def exercise_50():
+    """
+    The prime 41, can be written as the sum of six consecutive primes:
+    41 = 2 + 3 + 5 + 7 + 11 + 13
+
+    This is the longest sum of consecutive primes that adds to a prime
+    below one-hundred.
+
+    The longest sum of consecutive primes below one-thousand that adds
+    to a prime, contains 21 terms, and is equal to 953.
+
+    Which prime, below one-million, can be written as the sum of the
+    most consecutive primes?
+    """
+    sieve, prefixes, max_prime, longest_seq = [], [0], 0, 0
+    for p in primes():
+        if prefixes[-1] + p > 1000000:
+            break
+        sieve.append(p)
+        prefixes.append(prefixes[-1] + p)
+    terms = 1
+    for i in range(len(prefixes)):
+        for j in range(i + terms, len(prefixes)):
+            n = prefixes[j] - prefixes[i]
+            if j - i > terms:
+                is_p, sieve = is_prime(n, sieve)
+                if is_p:
+                    terms, max_prime = j - i, n
+    return max_prime, terms
+
+def exercise_54():
+    """
+    In the card game poker, a hand consists of five cards 
+    and are ranked, from lowest to highest, in the following way:
+    
+        High Card: Highest value card.
+        One Pair: Two cards of the same value.
+        Two Pairs: Two different pairs.
+        Three of a Kind: Three cards of the same value.
+        Straight: All cards are consecutive values.
+        Flush: All cards of the same suit.
+        Full House: Three of a kind and a pair.
+        Four of a Kind: Four cards of the same value.
+        Straight Flush: All cards are consecutive values of same suit.
+        Royal Flush: Ten, Jack, Queen, King, Ace, in same suit.
+    
+    The cards are valued in the order:
+    2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King, Ace.
+    
+    If two players have the same ranked hands then the rank made up of
+    the highest value wins; for example, a pair of eights beats a pair
+    of fives (see example 1 below). But if two ranks tie, for example,
+    both players have a pair of queens, then highest cards in each
+    hand are compared (see example 4 below); if the highest cards tie
+    then the next highest cards are compared, and so on.
+    
+    Consider the following five hands dealt to two players:
+    Hand | Player 1 | Player 2 | Winner
+    1	 	5H 5C 6S 7S KD
+    Pair of Fives
+    	 	2C 3S 8S 8D TD
+    Pair of Eights
+    	 	Player 2
+    2	 	5D 8C 9S JS AC
+    Highest card Ace
+    	 	2C 5C 7D 8S QH
+    Highest card Queen
+    	 	Player 1
+    3	 	2D 9C AS AH AC
+    Three Aces
+    	 	3D 6D 7D TD QD
+    Flush with Diamonds
+    	 	Player 2
+    4	 	4D 6S 9H QH QC
+    Pair of Queens
+    Highest card Nine
+    	 	3D 6D 7H QD QS
+    Pair of Queens
+    Highest card Seven
+    	 	Player 1
+    5	 	2H 2D 4C 4D 4S
+    Full House
+    With Three Fours
+    	 	3C 3D 3S 9S 9D
+    Full House
+    with Three Threes
+    	 	Player 1
+    
+    The file, poker.txt, contains one-thousand random hands dealt to
+    two players. Each line of the file contains ten cards (separated
+    by a single space): the first five are Player 1's cards and the
+    last five are Player 2's cards. You can assume that all hands are
+    valid (no invalid characters or repeated cards), each player's
+    hand is in no specific order, and in each hand there is a clear
+    winner.
+    
+    How many hands does Player 1 win?
+    """
+    # for testing
+    if '__file__' not in globals():
+        __file__ = '/home/wvxvw/Projects/firmitas/python/pe_exercises.py'
+    p = os.path
+    parent = p.dirname(p.dirname(__file__))
+    with open(p.join(parent, './etc/p054_poker.txt'), 'r') as f:
+        for line in f:
+            print line
