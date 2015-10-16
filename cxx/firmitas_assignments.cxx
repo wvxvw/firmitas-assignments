@@ -51,6 +51,8 @@ class primes {
         seq.push_back(attempt);
     }
   public:
+    primes() : pos(0), seq(primes_seq(10)) { }
+    
     primes(int n) : pos(0), seq(primes_seq(n)) { }
     
     int next() {
@@ -63,19 +65,48 @@ class primes {
 };
 
 bool decomposes_goldbach(int n) {
-    return true;
+    primes ps;
+    int p;
+    bool result;
+
+    while (p = ps.next()) {
+        if (p > n) {
+            result = false;
+            break;
+        }
+        int rest = n - p;
+        if (rest % 2 == 0) {
+            int half = rest / 2;
+            if (std::pow(std::floor(std::sqrt(half)), 2) == half) {
+                result = true;
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+int euler_46() {
+    primes ps;
+    int result, p, c;
+    bool found = false;
+
+    while (!found) {
+        p = ps.next();
+        c = p + 2;
+        p = ps.next();
+        while (c < p) {
+            if (!decomposes_goldbach(c)) {
+                result = c;
+                found = true;
+                break;
+            }
+            c += 2;
+        }
+    }
+    return result;
 }
 
 int main() {
-    std::cout << "Primes:\n";
-    primes ps(100);
-    int p;
-    
-    // for (int i : primes_seq(100)) {
-    //     std::cout << i << "\n";
-    // }
-    while (p = ps.next()) {
-        std::cout << "ps: " << p << "\n";
-        if (p > 150) break;
-    }
+    std::cout << "euler 46: " << euler_46() << "\n";
 }

@@ -1,3 +1,5 @@
 *~
 /python/pe-exercises.fdb_latexmk
 /cxx/.sconsign.dblite
+cxx/firmaitas_assignments
+cxx/firmaitas_assignments.o
