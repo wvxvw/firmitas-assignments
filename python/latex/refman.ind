@@ -1,0 +1,148 @@
+\begin{theindex}
+
+  \item {\+\_\+\+\_\+eq\+\_\+\+\_\+}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {\+\_\+\+\_\+ge\+\_\+\+\_\+}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {\+\_\+\+\_\+gt\+\_\+\+\_\+}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {\+\_\+\+\_\+init\+\_\+\+\_\+}
+    \subitem {cards\+::\+Hand}, \hyperpage{11}
+  \item {\+\_\+\+\_\+le\+\_\+\+\_\+}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {\+\_\+\+\_\+lt\+\_\+\+\_\+}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {\+\_\+\+\_\+ne\+\_\+\+\_\+}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+  \indexspace
+
+  \item {break\+\_\+tie}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+  \indexspace
+
+  \item {cards}, \hyperpage{9}
+    \subitem {cards\+\_\+cmp}, \hyperpage{9}
+    \subitem {denom}, \hyperpage{9}
+  \item {cards.\+Hand}, \hyperpage{11}
+  \item {cards.\+py}, \hyperpage{13}
+  \item {cards\+::\+Hand}
+    \subitem {\+\_\+\+\_\+eq\+\_\+\+\_\+}, \hyperpage{12}
+    \subitem {\+\_\+\+\_\+ge\+\_\+\+\_\+}, \hyperpage{12}
+    \subitem {\+\_\+\+\_\+gt\+\_\+\+\_\+}, \hyperpage{12}
+    \subitem {\+\_\+\+\_\+init\+\_\+\+\_\+}, \hyperpage{11}
+    \subitem {\+\_\+\+\_\+le\+\_\+\+\_\+}, \hyperpage{12}
+    \subitem {\+\_\+\+\_\+lt\+\_\+\+\_\+}, \hyperpage{12}
+    \subitem {\+\_\+\+\_\+ne\+\_\+\+\_\+}, \hyperpage{12}
+    \subitem {break\+\_\+tie}, \hyperpage{12}
+    \subitem {flush}, \hyperpage{12}
+    \subitem {four\+\_\+of\+\_\+a\+\_\+kind}, \hyperpage{12}
+    \subitem {full\+\_\+house}, \hyperpage{12}
+    \subitem {n\+\_\+of\+\_\+a\+\_\+kind}, \hyperpage{12}
+    \subitem {one\+\_\+pair}, \hyperpage{12}
+    \subitem {royal\+\_\+flush}, \hyperpage{12}
+    \subitem {scoring\+\_\+cards}, \hyperpage{12}
+    \subitem {straight}, \hyperpage{12}
+    \subitem {straight\+\_\+flush}, \hyperpage{12}
+    \subitem {three\+\_\+of\+\_\+a\+\_\+kind}, \hyperpage{12}
+    \subitem {two\+\_\+pairs}, \hyperpage{12}
+    \subitem {value}, \hyperpage{12}
+  \item {cards\+\_\+cmp}
+    \subitem {cards}, \hyperpage{9}
+  \item {combinatorics}, \hyperpage{9}
+    \subitem {digits}, \hyperpage{9}
+    \subitem {fib}, \hyperpage{9}
+    \subitem {has\+\_\+square}, \hyperpage{9}
+    \subitem {nub}, \hyperpage{10}
+  \item {combinatorics.\+py}, \hyperpage{13}
+
+  \indexspace
+
+  \item {denom}
+    \subitem {cards}, \hyperpage{9}
+  \item {digits}
+    \subitem {combinatorics}, \hyperpage{9}
+
+  \indexspace
+
+  \item {factors}
+    \subitem {primes}, \hyperpage{10}
+  \item {fib}
+    \subitem {combinatorics}, \hyperpage{9}
+  \item {flush}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {four\+\_\+of\+\_\+a\+\_\+kind}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {full\+\_\+house}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+  \indexspace
+
+  \item {has\+\_\+square}
+    \subitem {combinatorics}, \hyperpage{9}
+
+  \indexspace
+
+  \item {is\+\_\+next\+\_\+prime}
+    \subitem {primes}, \hyperpage{10}
+  \item {is\+\_\+prime}
+    \subitem {primes}, \hyperpage{10}
+
+  \indexspace
+
+  \item {n\+\_\+of\+\_\+a\+\_\+kind}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {next\+\_\+prime}
+    \subitem {primes}, \hyperpage{10}
+  \item {nub}
+    \subitem {combinatorics}, \hyperpage{10}
+
+  \indexspace
+
+  \item {odd\+\_\+composite}
+    \subitem {primes}, \hyperpage{10}
+  \item {one\+\_\+pair}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+  \indexspace
+
+  \item {primes}, \hyperpage{10}
+    \subitem {factors}, \hyperpage{10}
+    \subitem {is\+\_\+next\+\_\+prime}, \hyperpage{10}
+    \subitem {is\+\_\+prime}, \hyperpage{10}
+    \subitem {next\+\_\+prime}, \hyperpage{10}
+    \subitem {odd\+\_\+composite}, \hyperpage{10}
+    \subitem {primes}, \hyperpage{10}
+    \subitem {primes\+\_\+seq}, \hyperpage{10}
+  \item {primes.\+py}, \hyperpage{13}
+  \item {primes\+\_\+seq}
+    \subitem {primes}, \hyperpage{10}
+
+  \indexspace
+
+  \item {royal\+\_\+flush}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+  \indexspace
+
+  \item {scoring\+\_\+cards}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {straight}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {straight\+\_\+flush}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+  \indexspace
+
+  \item {three\+\_\+of\+\_\+a\+\_\+kind}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+  \item {two\+\_\+pairs}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+  \indexspace
+
+  \item {value}
+    \subitem {cards\+::\+Hand}, \hyperpage{12}
+
+\end{theindex}

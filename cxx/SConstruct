@@ -1,0 +1,4 @@
+env = Environment(CPPPATH = '/usr/include/boost/',
+                  CPPDEFINES = [], LIBS = [],
+                  CXXFLAGS = "-std=c++0x")
+env.Program('firmitas_assignments.cxx')

@@ -1,4 +1,4 @@
-% Created 2015-10-15 Thu 19:05
+% Created 2015-10-15 Thu 21:15
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -24,6 +24,8 @@
 \usepackage{color}
 \usepackage{enumerate}
 \usepackage{minted}
+\usepackage{standalone}
+\usepackage{./_build/latex/sphinx}
 \usemintedstyle{perldoc}
 \hypersetup{urlcolor=blue}
 \hypersetup{colorlinks,urlcolor=blue}
@@ -354,4 +356,93 @@ with open(cards_txt, 'r') as f:
 \begin{verbatim}
 376
 \end{verbatim}
+
+\section{Appendix}
+\label{sec:orgheadline19}
+
+
+\begin{fulllineitems}
+  \phantomsection\label{index:primes.factors}\pysiglinewithargsret{\code{primes.}\bfcode{factors}}{\emph{n}}{}
+  Generates all prime factors of n.
+
+\end{fulllineitems}
+
+\index{is\_next\_prime() (in module primes)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:primes.is_next_prime}\pysiglinewithargsret{\code{primes.}\bfcode{is\_next\_prime}}{\emph{n}, \emph{sieve}}{}
+  Tests whether n is prime.  Sieve should contain all primes less than n.
+
+\end{fulllineitems}
+
+\index{next\_prime() (in module primes)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:primes.next_prime}\pysiglinewithargsret{\code{primes.}\bfcode{next\_prime}}{\emph{sieve}}{}
+  Given the sieve containing primes searches for the prime greater than the
+  last element of the sieve, such that there are no primes less than this
+  one which are not in the sieve.
+
+\end{fulllineitems}
+
+\index{odd\_composite() (in module primes)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:primes.odd_composite}\pysiglinewithargsret{\code{primes.}\bfcode{odd\_composite}}{}{}
+  Iterator.  Generates odd composite numbers.
+
+\end{fulllineitems}
+
+\index{primes() (in module primes)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:primes.primes}\pysiglinewithargsret{\code{primes.}\bfcode{primes}}{\emph{n=None}}{}
+  Iterator.  Generates primes.
+
+\end{fulllineitems}
+
+\index{primes\_seq() (in module primes)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:primes.primes_seq}\pysiglinewithargsret{\code{primes.}\bfcode{primes\_seq}}{\emph{n}}{}
+  Generates a sequence of primes up to n.
+
+\end{fulllineitems}
+
+\phantomsection\label{index:module-combinatorics}\index{combinatorics (module)}\index{digits() (in module combinatorics)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:combinatorics.digits}\pysiglinewithargsret{\code{combinatorics.}\bfcode{digits}}{\emph{n}}{}
+  The digits of the argument, not counting the sign.
+
+\end{fulllineitems}
+
+\index{fib() (in module combinatorics)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:combinatorics.fib}\pysiglinewithargsret{\code{combinatorics.}\bfcode{fib}}{\emph{n}}{}
+  It is possible to compute N'th Fibonacci number analytically,
+  but I was asked not to do this, and to keep it simple. So, here
+  you have the iterative version.
+
+\end{fulllineitems}
+
+\index{has\_square() (in module combinatorics)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:combinatorics.has_square}\pysiglinewithargsret{\code{combinatorics.}\bfcode{has\_square}}{\emph{n}}{}
+  Returns True iff n contains a perfect square as a factor.
+
+\end{fulllineitems}
+
+\index{nub() (in module combinatorics)}
+
+\begin{fulllineitems}
+  \phantomsection\label{index:combinatorics.nub}\pysiglinewithargsret{\code{combinatorics.}\bfcode{nub}}{\emph{nums}}{}
+  Returns a copy of nums with duplicates removed.  The numbers
+  in nums will be solrted in increasing order.
+
+\end{fulllineitems}
+
+\phantomsection\label{index:module-cards}\index{cards (module)}
 \end{document}
