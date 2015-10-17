@@ -4,6 +4,19 @@
 #include <algorithm>
 #include <string>
 #include <fstream>
+#include <gmpxx.h>
+
+mpz_class fib(int n) {
+    mpz_class total = 1;
+    mpz_class last = 1;
+    while (n > 3) {
+        mpz_class temp = total;
+        total += last;
+        last = temp;
+        n--;
+    }
+    return total;
+}
 
 bool is_zero(int x) { return x == 0; }
 
@@ -276,6 +289,32 @@ class hand {
     }
 };
 
+int euler_25() {
+    int n = 1000;
+    mpz_class guess = fib(n);
+    
+    while (mpz_sizeinbase(guess.get_mpz_t(), 10) < 1000) {
+        n *= 2;
+        guess = fib(n);
+    }
+    int m = n / 4;
+    n -= m;
+    while (m > 1) {
+        guess = fib(n);
+        m /= 2;
+        if (mpz_sizeinbase(guess.get_mpz_t(), 10) > 1000) {
+            n -= m;
+        } else {
+            n += m;
+        }
+    }
+    while (mpz_sizeinbase(guess.get_mpz_t(), 10) >= 1000) {
+        n--;
+        guess = fib(n);
+    }
+    return n + 1;
+}
+
 int euler_46() {
     primes ps;
     int result, p, c;
@@ -340,6 +379,7 @@ int euler_54() {
 }
 
 int main() {
+    std::cout << "euler 25: " << euler_25() << "\n";
     std::cout << "euler 46: " << euler_46() << "\n";
     std::cout << "euler 50: " << euler_50() << "\n";
     std::cout << "euler 54: " << euler_54() << "\n";
