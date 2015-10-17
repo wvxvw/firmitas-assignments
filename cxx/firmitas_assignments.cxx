@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <string>
 
 bool is_zero(int x) { return x == 0; }
 
@@ -94,6 +95,82 @@ bool decomposes_goldbach(int n) {
     return result;
 }
 
+struct card_t {
+    unsigned char suit;
+    
+    unsigned char denom;
+    
+    card_t() : suit(' '), denom(' ') {}
+    
+    card_t(unsigned char suit_, unsigned char denom_) : suit(suit_), denom(denom_) {}
+};
+
+std::vector<card_t> parse_cards(std::string raw) {
+    std::vector<card_t> result(5);
+    int state = 0;
+    unsigned char suit, denom;
+    std::string denoms("123456789TJQKA");
+    std::size_t place = 0;
+    std::string normalized = raw[raw.size() - 1] == ' ' ? raw : raw + " ";
+    
+    for (auto c : normalized) {
+        switch (state) {
+            case 0:
+                denom = denoms.find(c) + 1;
+                state = 1;
+                break;
+            case 1:
+                suit = (unsigned char)c;
+                state = 2;
+                break;
+            case 2:
+                struct card_t created(suit, denom);
+                result[place++] = created;
+                state = 0;
+        }
+    }
+    return result;
+}
+
+std::vector<unsigned char> group_cards(std::vector<card_t> cards) {
+    std::vector<unsigned char> result;
+    struct card_t* last = NULL;
+    unsigned char counter = 0;
+    
+    for (auto c : cards) {
+        if (last != NULL) {
+            if (last->denom == c.denom) {
+                counter++;
+            } else {
+                result.push_back(counter);
+                counter = 0;
+            }
+        } else {
+            last = &c;
+        }
+    }
+    return result;
+}
+
+class hand {
+    std::vector<card_t> cards;
+    
+    std::vector<unsigned char> stretch;
+
+  public:
+    hand(std::string raw) :
+            cards(parse_cards(raw)),
+            stretch(group_cards(cards)) {
+
+    }
+    int value() const {
+        for (auto c : cards) {
+            std::cout << "denom: " << (int)c.denom << " suit: " << c.suit << "\n";
+        }
+        return 100;
+    }
+};
+
 int euler_46() {
     primes ps;
     int result, p, c;
@@ -145,4 +222,7 @@ int euler_50() {
 int main() {
     std::cout << "euler 46: " << euler_46() << "\n";
     std::cout << "euler 50: " << euler_50() << "\n";
+    hand h("8C TS KC 9H 4S");
+    std::cout << "hand: " << h.value() << "\n";
+    return 0;
 }
