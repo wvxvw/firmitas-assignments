@@ -62,6 +62,14 @@ class primes {
         extend();
         return next();
     }
+    
+    bool is_prime(int n) {
+        return std::binary_search(seq.begin(), seq.end(), n);
+    }
+
+    std::size_t size() { return seq.size(); }
+
+    int& operator [](std::size_t n) { return seq[n]; }
 };
 
 bool decomposes_goldbach(int n) {
@@ -107,6 +115,34 @@ int euler_46() {
     return result;
 }
 
+int euler_50() {
+    primes ps(1000000);
+    std::vector<int> sums(ps.size());
+    int max_prime;
+    std::size_t terms = 1;
+    std::size_t top;
+    
+    sums[0] = ps[0];
+    for (std::size_t i = 1; i < ps.size(); i++) {
+        if (sums[i - 1] + ps[i] > 1000000) {
+            top = i;
+            break;
+        }
+        sums[i] = sums[i - 1] + ps[i];
+    }
+    for (std::size_t i = 0; i < top; i++) {
+        for (std::size_t j = terms + i; j < top; j++) {
+            int n = sums[j] - sums[i];
+            if (j - i > terms && ps.is_prime(n)) {
+                terms = j - i;
+                max_prime = n;
+            }
+        }
+    }
+    return max_prime;
+}
+
 int main() {
     std::cout << "euler 46: " << euler_46() << "\n";
+    std::cout << "euler 50: " << euler_50() << "\n";
 }
