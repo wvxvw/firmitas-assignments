@@ -1,0 +1,24 @@
+* About
+  This project is a test exercise for Firmitas.  It contains several
+  [[https://projecteuler.net/][Project Euler]] problems solved in Python and C++.
+  You can view it online:
+  - [[./pe-exercises.pdf][PDF]]
+  - [[./pe-exercises.org][HTML]]
+
+* Obtaining
+  The project is hosted at Github, to check it out do:
+  #+BEGIN_SRC sh
+    git clone https://github.com/wvxvw/firmitas-assignments.git
+  #+END_SRC
+  
+* Building
+  Please read [[./pe-exercises.pdf][PDF]], the *Foreward* section for information about
+  dependencies.  Provided the dependencies are satisfied, you may run:
+  #+BEGIN_SRC sh
+    make
+  #+END_SRC
+  To build the project.  You don't have to run =Make= though--all the
+  binary artefacts are included in the distribution.
+
+* Credits
+  All code in this project is released into public domain.
