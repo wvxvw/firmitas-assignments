@@ -10,20 +10,15 @@
 #+LaTeX_CLASS: article
 #+LATEX_HEADER: \usepackage[usenames,dvipsnames]{color}
 #+LATEX_HEADER: \usepackage{commath}
-#+LATEX_HEADER: \usepackage{listings}
 #+LATEX_HEADER: \usepackage{color}
 #+LATEX_HEADER: \usepackage{enumerate}
 #+LATEX_HEADER: \usepackage{minted}
-#+LATEX_HEADER: \usepackage{standalone}
-#+LATEX_HEADER: \usepackage{calc}
-#+LATEX_HEADER: \usepackage{./latex/doxygen}
 #+LaTeX_HEADER: \usemintedstyle{perldoc}
 #+LATEX_HEADER: \hypersetup{urlcolor=blue}
 #+LATEX_HEADER: \hypersetup{colorlinks,urlcolor=blue}
 #+LATEX_HEADER: \setlength{\parskip}{16pt plus 2pt minus 2pt}
 #+LATEX_HEADER: \renewcommand{\arraystretch}{1.6}
 #+LATEX_HEADER: \definecolor{codebg}{rgb}{0.96,0.99,0.8}
-#+LATEX_HEADER: \newcommand{\+}{\discretionary{\mbox{\scriptsize$\hookleftarrow$}}{}{}}
 
 #+BEGIN_SRC emacs-lisp :exports none
   (setq org-latex-pdf-process
@@ -34,9 +29,17 @@
           org-src-fontify-natively t
           org-listings-escape-inside '("(*@" . "@*)")
           org-babel-latex-htlatex "htlatex")
+
   (defmacro by-backend (&rest body)
       `(cl-case (when (boundp 'backend) (org-export-backend-name backend))
          ,@body))
+
+  (defun cpp-includes ()
+      (append '("<iostream>" "<vector>" "<cmath>" "<algorithm>" "<string>"
+                "<fstream>" "<gmpxx.h>")
+              (cl-loop with cwd = (file-name-directory (buffer-file-name))
+                       for inc in '("combinatorics" "primes" "cards")
+                       collect (format "\"%scxx/%s.cxx\"" cwd inc))))
 #+END_SRC
 
 #+RESULTS:
@@ -47,6 +50,50 @@
 #+END_LaTeX
 
 * Foreword
+  This document contains several Project Euler problems solved in Python and
+  C++.  It was written using [[http://orgmode.org/][org-mode]] for Emacs.  To uninitiated, this means
+  that this document was originally written in plain text and later converted to
+  LaTeX source.  This also means that this document contains [[http://orgmode.org/worg/org-contrib/babel/][Babel]] source code
+  blocks which allow code evaluation during conversion to LaTeX.
+
+  I made the decision to structure the submission in this way because this
+  allows for controlled and at the same time typographically appealing
+  presentation of my work.  While I was required to pretend to work on a
+  ``real'' project, I find it hard to think about a set of disparate
+  number-theoretic problems as comprising a software engineering project in the
+  common sense of the word.  It seemed like an article might prove better
+  experience due to having more room for discussion illustrated by small code
+  snippets.
+
+  Few disclaimers are due.  I am not really a C++ programmer.  This project,
+  perhaps, contains the largest amount of C++ code I've ever written.  The way I
+  worked through the problems was to first solve them in Python and then to
+  translate them into C++.  While my Python code would probably meet the
+  industry standards, I excpect my C++ code to be subpar, both as not-idiomatic
+  and inefficient, or, perhaps even outright wrong in its dealing with memory
+  allocation and other complications of C++.  Basically, I worked on it until I
+  could produce the result I knew to be correct, and left it immediately
+  afterwards.
+
+  As of time of this writing, I didn't solve the $136^{th}$ problem, though I do
+  have some thoughts on how to approach it.  I've written some of it in the last
+  paragraph.
+
+  The project has a Makefile, and, provided you have all the dependencies, you
+  should be able to reproduce this document.  Plain ``vanilla'' Emacs should be
+  enough for the =org-mode= and =babel= dependencies.  My Python code doesn't
+  use anything outside of standard library, while C++ code relies on [[https://gmplib.org/][GNU MP]]
+  library for biginteger support.  This means that you need to have development
+  header =gmpxx.h= on your includes path.  On top of the typical LaTeX
+  installation you would need the [[https://www.ctan.org/pkg/minted?lang=en][minted]] package (for coloring the source code
+  blocks).
+
+  Not all code is presented in the document.  The auxilary functions are found
+  in [[./python]] and [[./cxx]] directories.  There is also some documentation generated
+  for them using [[http://www.stack.nl/~dimitri/doxygen/][Doxygen]]. It was difficult to include the documentation directly
+  in this document (LaTeX style clashes etc.) thus the documentation takes up a
+  separate document.
+
 * Exercises
 ** 1000-digits Fibonacci number PE-25
 *** Problem Statement
@@ -101,7 +148,7 @@
 
     #+HEADER: :exports both
     #+BEGIN_SRC python
-      from combinatorics import fib, digits
+      from python.combinatorics import fib, digits
 
       n = 1000
       guess = fib(n)
@@ -121,6 +168,37 @@
           n -= 1
           guess = fib(n)
       return n + 1
+    #+END_SRC
+
+    #+RESULTS:
+    : 4782
+
+    #+HEADER: :exports both
+    #+HEADER: :flags -lgmp -lgmpxx -std=c++0x
+    #+BEGIN_SRC C++ :includes `(,@(cpp-includes))
+      int n = 1000;
+      mpz_class guess = fib(n);
+
+      while (mpz_sizeinbase(guess.get_mpz_t(), 10) < 1000) {
+          n *= 2;
+          guess = fib(n);
+      }
+      int m = n / 4;
+      n -= m;
+      while (m > 1) {
+          guess = fib(n);
+          m /= 2;
+          if (mpz_sizeinbase(guess.get_mpz_t(), 10) > 1000) {
+              n -= m;
+          } else {
+              n += m;
+          }
+      }
+      while (mpz_sizeinbase(guess.get_mpz_t(), 10) >= 1000) {
+          n--;
+          guess = fib(n);
+      }
+      std::cout << n + 1;
     #+END_SRC
 
     #+RESULTS:
@@ -158,7 +236,7 @@
     #+HEADER: :exports both
     #+BEGIN_SRC python
       import math
-      from primes import odd_composite, primes
+      from python.primes import odd_composite, primes
 
       def decomposes_goldbach(n):
           """
@@ -175,6 +253,32 @@
       for c in odd_composite():
           if not decomposes_goldbach(c):
               return c
+    #+END_SRC
+
+    #+RESULTS:
+    : 5777
+
+    #+HEADER: :exports both
+    #+HEADER: :flags -lgmp -lgmpxx -std=c++0x
+    #+BEGIN_SRC C++ :includes `(,@(cpp-includes))
+      primes ps;
+      int result, p, c;
+      bool found = false;
+
+      while (!found) {
+          p = ps.next();
+          c = p + 2;
+          p = ps.next();
+          while (c < p) {
+              if (!decomposes_goldbach(c)) {
+                  result = c;
+                  found = true;
+                  break;
+              }
+              c += 2;
+          }
+      }
+      std::cout << result;
     #+END_SRC
 
     #+RESULTS:
@@ -207,7 +311,7 @@
     generated so far.  This acts as a cache for the sums we would have to
     calculate repeatedly whenever we'd verify every other sequence of primes.
 
-    During the next step the code choses sums in order of decreasing number of
+    During the next step the code chooses sums in order of decreasing number of
     summands, iteratively updating the maximum prime for the longest sequence
     found so far.  Once no sums of the longest-so-far sequence can be found,
     the lagorithm terminates.
@@ -215,7 +319,7 @@
 *** Solution
     #+HEADER: :exports both
     #+BEGIN_SRC python
-      from primes import primes, is_prime
+      from python.primes import primes, is_prime
 
       sieve, prefixes, max_prime, longest_seq = [], [0], 0, 0
       for p in primes():
@@ -232,6 +336,38 @@
                   if is_p:
                       terms, max_prime = j - i, n
       return max_prime
+    #+END_SRC
+
+    #+RESULTS:
+    : 997651
+
+    #+HEADER: :exports both
+    #+HEADER: :flags -lgmp -lgmpxx -std=c++0x
+    #+BEGIN_SRC C++ :includes `(,@(cpp-includes))
+      primes ps(1000000);
+      std::vector<int> sums(ps.size());
+      int max_prime;
+      std::size_t terms = 1;
+      std::size_t top;
+  
+      sums[0] = ps[0];
+      for (std::size_t i = 1; i < ps.size(); i++) {
+          if (sums[i - 1] + ps[i] > 1000000) {
+              top = i;
+              break;
+          }
+          sums[i] = sums[i - 1] + ps[i];
+      }
+      for (std::size_t i = 0; i < top; i++) {
+          for (std::size_t j = terms + i; j < top; j++) {
+              int n = sums[j] - sums[i];
+              if (j - i > terms && ps.is_prime(n)) {
+                  terms = j - i;
+                  max_prime = n;
+              }
+          }
+      }
+      std::cout << max_prime;
     #+END_SRC
 
     #+RESULTS:
@@ -321,12 +457,12 @@
          that will influence the decision.
        + Compare selected cards in order from highest to lowest denomination.
          
-    The =cards_txt= file can be found in [[../etc/p054_poker.txt]].
+    The =cards_txt= file can be found in [[./etc/p054_poker.txt]].
 
 *** Solution
-    #+HEADER: :exports both :var cards_txt=(expand-file-name "./etc/p054_poker.txt" "..")
+    #+HEADER: :exports both :var cards_txt=(expand-file-name "./etc/p054_poker.txt" ".")
     #+BEGIN_SRC python
-      from cards import Hand
+      from python.cards import Hand
 
       with open(cards_txt, 'r') as f:
           wins = 0
@@ -340,23 +476,41 @@
     #+RESULTS:
     : 376
 
-* Appendix
+    #+HEADER: :exports both
+    #+HEADER: :flags -lgmp -lgmpxx -std=c++0x
+    #+HEADER: :var poker_txt="./etc/p054_poker.txt"
+    #+BEGIN_SRC C++ :includes `(,@(cpp-includes))
+      std::ifstream in(poker_txt);
+      std::string line;
+      int result = 0;
+      while (std::getline(in, line)) {
+          hand a(line.substr(0, 3 * 5));
+          hand b(line.substr(3 * 5, 3 * 10 - 1));
+          if (a > b) {
+              result++;
+          }
+      }
+      std::cout << result;
+    #+END_SRC
 
-** Namespace Documentation
-   #+BEGIN_LaTeX
-   \input{./latex/namespacecards}
-   \input{./latex/namespacecombinatorics}
-   \input{./latex/namespaceprimes}
-   #+END_LaTeX
+    #+RESULTS:
+    : 376
+** Unique arithmetic progressions
+*** Problem statement
+    The positive integers, $x$, $y$, and $z$, are consecutive terms of an
+    arithmetic progression.  Given that $n$ is a positive integer, the equation,
+    $x^2-y^2-z^2 = n$, has exactly one solution when $n = 20$:
 
-** Class Documentation
-   #+BEGIN_LaTeX
-   \input{./latex/classcards_1_1Hand}
-   #+END_LaTeX
+    #+HEADER: :exports results
+    #+HEADER: :results (by-backend (pdf "latex") (t "raw"))
+    #+BEGIN_SRC latex
+      13^2 - 10^2 - 7^2 = 20
+    #+END_SRC
 
-** File Documentation
-   #+BEGIN_LaTeX
-   \input{./latex/cards_8py}
-   \input{./latex/combinatorics_8py}
-   \input{./latex/primes_8py}
-   #+END_LaTeX
+    In fact there are twenty-five values of n below one hundred for which the
+    equation has a unique solution.
+
+    How many values of n less than fifty million have exactly one solution?
+
+*** Discussion
+    

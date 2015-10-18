@@ -1,4 +1,4 @@
-% Created 2015-10-16 Fri 21:59
+% Created 2015-10-18 Sun 11:17
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -20,20 +20,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{commath}
-\usepackage{listings}
 \usepackage{color}
 \usepackage{enumerate}
 \usepackage{minted}
-\usepackage{standalone}
-\usepackage{calc}
-\usepackage{./latex/doxygen}
 \usemintedstyle{perldoc}
 \hypersetup{urlcolor=blue}
 \hypersetup{colorlinks,urlcolor=blue}
 \setlength{\parskip}{16pt plus 2pt minus 2pt}
 \renewcommand{\arraystretch}{1.6}
 \definecolor{codebg}{rgb}{0.96,0.99,0.8}
-\newcommand{\+}{\discretionary{\mbox{\scriptsize$\hookleftarrow$}}{}{}}
 \author{Oleg Sivokon}
 \date{\textit{<2015-10-15 Thu>}}
 \title{Selected Project Euler Exercises}
@@ -53,8 +48,52 @@
 
 \section{Foreword}
 \label{sec:orgheadline1}
+This document contains several Project Euler problems solved in Python and
+C++.  It was written using \href{http://orgmode.org/}{org-mode} for Emacs.  To uninitiated, this means
+that this document was originally written in plain text and later converted to
+\LaTeX{} source.  This also means that this document contains \href{http://orgmode.org/worg/org-contrib/babel/}{Babel} source code
+blocks which allow code evaluation during conversion to \LaTeX{}.
+
+I made the decision to structure the submission in this way because this
+allows for controlled and at the same time typographically appealing
+presentation of my work.  While I was required to pretend to work on a
+``real'' project, I find it hard to think about a set of disparate
+number-theoretic problems as comprising a software engineering project in the
+common sense of the word.  It seemed like an article might prove better
+experience due to having more room for discussion illustrated by small code
+snippets.
+
+Few disclaimers are due.  I am not really a C++ programmer.  This project,
+perhaps, contains the largest amount of C++ code I've ever written.  The way I
+worked through the problems was to first solve them in Python and then to
+translate them into C++.  While my Python code would probably meet the
+industry standards, I excpect my C++ code to be subpar, both as not-idiomatic
+and inefficient, or, perhaps even outright wrong in its dealing with memory
+allocation and other complications of C++.  Basically, I worked on it until I
+could produce the result I knew to be correct, and left it immediately
+afterwards.
+
+As of time of this writing, I didn't solve the \(136^{th}\) problem, though I do
+have some thoughts on how to approach it.  I've written some of it in the last
+paragraph.
+
+The project has a Makefile, and, provided you have all the dependencies, you
+should be able to reproduce this document.  Plain ``vanilla'' Emacs should be
+enough for the \texttt{org-mode} and \texttt{babel} dependencies.  My Python code doesn't
+use anything outside of standard library, while C++ code relies on \href{https://gmplib.org/}{GNU MP}
+library for biginteger support.  This means that you need to have development
+header \texttt{gmpxx.h} on your includes path.  On top of the typical \LaTeX{}
+installation you would need the \href{https://www.ctan.org/pkg/minted?lang=en}{minted} package (for coloring the source code
+blocks).
+
+Not all code is presented in the document.  The auxilary functions are found
+in \url{./python} and \url{./cxx} directories.  There is also some documentation generated
+for them using \href{http://www.stack.nl/~dimitri/doxygen/}{Doxygen}. It was difficult to include the documentation directly
+in this document (\LaTeX{} style clashes etc.) thus the documentation takes up a
+separate document.
+
 \section{Exercises}
-\label{sec:orgheadline18}
+\label{sec:orgheadline21}
 \subsection{1000-digits Fibonacci number PE-25}
 \label{sec:orgheadline5}
 \subsubsection{Problem Statement}
@@ -105,7 +144,7 @@ using linear search (this won't take more than \(log(2^4) = 4\) operations.)
 \label{sec:orgheadline4}
 
 \begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
-from combinatorics import fib, digits
+from python.combinatorics import fib, digits
 
 n = 1000
 guess = fib(n)
@@ -125,6 +164,36 @@ while len(digits(guess)) >= 1000:
     n -= 1
     guess = fib(n)
 return n + 1
+\end{minted}
+
+\begin{verbatim}
+4782
+\end{verbatim}
+
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{c++}
+int n = 1000;
+mpz_class guess = fib(n);
+
+while (mpz_sizeinbase(guess.get_mpz_t(), 10) < 1000) {
+    n *= 2;
+    guess = fib(n);
+}
+int m = n / 4;
+n -= m;
+while (m > 1) {
+    guess = fib(n);
+    m /= 2;
+    if (mpz_sizeinbase(guess.get_mpz_t(), 10) > 1000) {
+        n -= m;
+    } else {
+        n += m;
+    }
+}
+while (mpz_sizeinbase(guess.get_mpz_t(), 10) >= 1000) {
+    n--;
+    guess = fib(n);
+}
+std::cout << n + 1;
 \end{minted}
 
 \begin{verbatim}
@@ -163,7 +232,7 @@ tests whether the number complies with the contstraints of conjecture.
 \label{sec:orgheadline8}
 \begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
 import math
-from primes import odd_composite, primes
+from python.primes import odd_composite, primes
 
 def decomposes_goldbach(n):
     """
@@ -180,6 +249,31 @@ def decomposes_goldbach(n):
 for c in odd_composite():
     if not decomposes_goldbach(c):
         return c
+\end{minted}
+
+\begin{verbatim}
+5777
+\end{verbatim}
+
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{c++}
+primes ps;
+int result, p, c;
+bool found = false;
+
+while (!found) {
+    p = ps.next();
+    c = p + 2;
+    p = ps.next();
+    while (c < p) {
+        if (!decomposes_goldbach(c)) {
+            result = c;
+            found = true;
+            break;
+        }
+        c += 2;
+    }
+}
+std::cout << result;
 \end{minted}
 
 \begin{verbatim}
@@ -212,7 +306,7 @@ than a million, while at the same time calculating sums of the primes
 generated so far.  This acts as a cache for the sums we would have to
 calculate repeatedly whenever we'd verify every other sequence of primes.
 
-During the next step the code choses sums in order of decreasing number of
+During the next step the code chooses sums in order of decreasing number of
 summands, iteratively updating the maximum prime for the longest sequence
 found so far.  Once no sums of the longest-so-far sequence can be found,
 the lagorithm terminates.
@@ -220,7 +314,7 @@ the lagorithm terminates.
 \subsubsection{Solution}
 \label{sec:orgheadline12}
 \begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
-from primes import primes, is_prime
+from python.primes import primes, is_prime
 
 sieve, prefixes, max_prime, longest_seq = [], [0], 0, 0
 for p in primes():
@@ -237,6 +331,37 @@ for i in range(len(prefixes)):
             if is_p:
                 terms, max_prime = j - i, n
 return max_prime
+\end{minted}
+
+\begin{verbatim}
+997651
+\end{verbatim}
+
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{c++}
+primes ps(1000000);
+std::vector<int> sums(ps.size());
+int max_prime;
+std::size_t terms = 1;
+std::size_t top;
+
+sums[0] = ps[0];
+for (std::size_t i = 1; i < ps.size(); i++) {
+    if (sums[i - 1] + ps[i] > 1000000) {
+        top = i;
+        break;
+    }
+    sums[i] = sums[i - 1] + ps[i];
+}
+for (std::size_t i = 0; i < top; i++) {
+    for (std::size_t j = terms + i; j < top; j++) {
+        int n = sums[j] - sums[i];
+        if (j - i > terms && ps.is_prime(n)) {
+            terms = j - i;
+            max_prime = n;
+        }
+    }
+}
+std::cout << max_prime;
 \end{minted}
 
 \begin{verbatim}
@@ -339,12 +464,12 @@ that will influence the decision.
 \end{itemize}
 \end{enumerate}
 
-The \texttt{cards\_txt} file can be found in \url{../etc/p054_poker.txt}.
+The \texttt{cards\_txt} file can be found in \url{./etc/p054_poker.txt}.
 
 \subsubsection{Solution}
 \label{sec:orgheadline16}
 \begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{python}
-from cards import Hand
+from python.cards import Hand
 
 with open(cards_txt, 'r') as f:
     wins = 0
@@ -359,22 +484,38 @@ with open(cards_txt, 'r') as f:
 376
 \end{verbatim}
 
-\section{Appendix}
-\label{sec:orgheadline22}
+\begin{minted}[bgcolor=codebg,fontsize=\scriptsize]{c++}
+std::ifstream in(poker_txt);
+std::string line;
+int result = 0;
+while (std::getline(in, line)) {
+    hand a(line.substr(0, 3 * 5));
+    hand b(line.substr(3 * 5, 3 * 10 - 1));
+    if (a > b) {
+        result++;
+    }
+}
+std::cout << result;
+\end{minted}
 
-\subsection{Namespace Documentation}
-\label{sec:orgheadline19}
-\input{./latex/namespacecards}
-\input{./latex/namespacecombinatorics}
-\input{./latex/namespaceprimes}
-
-\subsection{Class Documentation}
+\begin{verbatim}
+376
+\end{verbatim}
+\subsection{Unique arithmetic progressions}
 \label{sec:orgheadline20}
-\input{./latex/classcards_1_1Hand}
+\subsubsection{Problem statement}
+\label{sec:orgheadline18}
+The positive integers, \(x\), \(y\), and \(z\), are consecutive terms of an
+arithmetic progression.  Given that \(n\) is a positive integer, the equation,
+\(x^2-y^2-z^2 = n\), has exactly one solution when \(n = 20\):
 
-\subsection{File Documentation}
-\label{sec:orgheadline21}
-\input{./latex/cards_8py}
-\input{./latex/combinatorics_8py}
-\input{./latex/primes_8py}
+13\(^{\text{2}}\) - 10\(^{\text{2}}\) - 7\(^{\text{2}}\) = 20
+
+In fact there are twenty-five values of n below one hundred for which the
+equation has a unique solution.
+
+How many values of n less than fifty million have exactly one solution?
+
+\subsubsection{Discussion}
+\label{sec:orgheadline19}
 \end{document}

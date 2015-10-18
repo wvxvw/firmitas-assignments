@@ -1,5 +1,0 @@
-env = Environment(CPPPATH = '/usr/include/boost/',
-                  CPPDEFINES = [],
-                  LIBS = ['gmp', 'gmpxx'],
-                  CXXFLAGS = "-std=c++0x")
-env.Program('firmitas_assignments.cxx')
