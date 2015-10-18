@@ -89,7 +89,7 @@
   blocks).
 
   Not all code is presented in the document.  The auxilary functions are found
-  in [[./python]] and [[./cxx]] directories.  There is also some documentation generated
+  in [[./python]] and [[./cxx]] directories.  There is also [[file:latex/refman.pdf][some documentation]] generated
   for them using [[http://www.stack.nl/~dimitri/doxygen/][Doxygen]]. It was difficult to include the documentation directly
   in this document (LaTeX style clashes etc.) thus the documentation takes up a
   separate document.

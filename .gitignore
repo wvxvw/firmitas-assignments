@@ -4,3 +4,12 @@
 cxx/firmaitas_assignments
 cxx/firmaitas_assignments.o
 /cxx/firmitas_assignments.o
+./latex/*.tex
+/latex/Makefile
+/latex/*.tex
+/latex/*.eps
+/latex/classpython_1_1cards_1_1Hand.pdf
+/latex/*.sty
+/latex/*.idx
+/latex/*.ilg
+/latex/*.ind

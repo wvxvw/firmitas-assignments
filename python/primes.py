@@ -27,6 +27,10 @@ def is_next_prime(n, sieve):
     return True
 
 def is_prime(n, sieve):
+    """
+    Returns True if the number is a prime.  Sieve should contain some prime
+    numbers to start the testing (the more the better).
+    """
     if n < sieve[-1]:
         pos = bisect.bisect_left(sieve, n)
         return sieve[pos] == n, sieve

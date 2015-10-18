@@ -5,6 +5,8 @@
   - [[./pe-exercises.pdf][PDF]]
   - [[./pe-exercises.org][HTML]]
 
+  There also is API reference, available [[file:latex/refman.pdf][here]].
+
 * Obtaining
   The project is hosted at Github, to check it out do:
   #+BEGIN_SRC sh
