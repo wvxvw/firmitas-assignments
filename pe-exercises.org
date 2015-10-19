@@ -525,8 +525,8 @@
         -d^2 + 2dx + 3x^2                        &= n \iff \\
         (d + x)^2 - 2(d^2 - x^2)                 &= n \iff \\
         (d + x)^2 - 2(d + x)(d - x)              &= n \iff \\
-        (d + x -2d - 2x)(d + x)                  &= n \iff \\
-        (-d - x)(d + x)                          &= n
+        (d + x -2d + 2x)(d + x)                  &= n \iff \\
+        (3x - d)(d + x)                          &= n
       \end{align*}
     #+END_SRC
     We also know that both $d$ and $x$ must be positive.  My guess is that we
