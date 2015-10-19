@@ -513,4 +513,25 @@
     How many values of n less than fifty million have exactly one solution?
 
 *** Discussion
+    First, we could reduce the number of variables:
+    #+HEADER: :exports results
+    #+HEADER: :results (by-backend (pdf "latex") (t "raw"))
+    #+BEGIN_SRC latex
+      \begin{align*}
+        a^2 - b^2 - c^2                         &= n \iff \\
+        (d + 2x)^2 - (d + x)^2 - d^2            &= n \iff \\
+        \textit{from arithmetic progression definition} & \\
+        d^2 + 4dx + 4x^2 - d^2 - 2dx - x^2 - d^2 &= n \iff \\
+        -d^2 + 2dx + 3x^2                        &= n \iff \\
+        (d + x)^2 - 2(d^2 - x^2)                 &= n
+      \end{align*}
+    #+END_SRC
+    We also know that both $d$ and $x$ must be positive.  My guess is that we
+    could look for solution by differentiating this equation with respect to
+    either of these variables.
     
+    I was looking for ways to give upper bounds to either one of the variables,
+    s.a. to make sure that if I try to verify that $n$ is unique, I would only
+    need to do finite amount of work, but I don't have any good idea so far.  I
+    have a feeling that both $x < \sqrt{n}$ and $d < \sqrt{n}$, but I cannot
+    prove it.
