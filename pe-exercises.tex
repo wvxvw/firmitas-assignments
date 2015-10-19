@@ -1,4 +1,4 @@
-% Created 2015-10-19 Mon 12:18
+% Created 2015-10-19 Mon 12:24
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -525,7 +525,10 @@ First, we could reduce the number of variables:
   \textit{from arithmetic progression definition} & \\
   d^2 + 4dx + 4x^2 - d^2 - 2dx - x^2 - d^2 &= n \iff \\
   -d^2 + 2dx + 3x^2                        &= n \iff \\
-  (d + x)^2 - 2(d^2 - x^2)                 &= n
+  (d + x)^2 - 2(d^2 - x^2)                 &= n \iff \\
+  (d + x)^2 - 2(d + x)(d - x)              &= n \iff \\
+  (d + x -2d - 2x)(d + x)                  &= n \iff \\
+  (-d - x)(d + x)                          &= n
 \end{align*}
 
 We also know that both \(d\) and \(x\) must be positive.  My guess is that we
